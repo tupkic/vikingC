@@ -58,6 +58,7 @@ class UsersController extends Controller
             'email' => $data['email'],
             'remember_token' => Str::random(15),
             'password' => Hash::make($data['password']),
+            'is_admin' => $data['is_admin'],
         ]);
 
         $token = $user->createToken('Laravel Personal Access Client')->accessToken;
@@ -82,7 +83,7 @@ class UsersController extends Controller
 
                 $validate = Validator::make($data, [
                     'name' => 'string|max:255',
-                    'email' => 'string|email|max:255|unique:users',
+                    'email' => 'string|email|max:255|unique:users,email,'. $id,
                     'password' => 'string|min:6|confirmed',
                     'is_admin' => 'integer'
                 ]);
@@ -133,7 +134,7 @@ class UsersController extends Controller
             if ($user) {
 
                 if ($user->delete()) {
-                    return response(['message' => 'User successfully deleted.'], 422);
+                    return response(['message' => 'User successfully deleted.'], 200);
                 }
 
                     return response(['message' => 'User not deleted something went wrong.'], 422);
